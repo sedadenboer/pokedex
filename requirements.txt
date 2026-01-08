@@ -3,3 +3,4 @@ pgvector==0.4.2
 python-dotenv==1.2.1
 sentence_transformers==5.2.0
 SQLAlchemy==2.0.45
+psycopg2-binary==2.9.11
