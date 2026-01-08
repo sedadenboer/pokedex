@@ -9,7 +9,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 from pgvector.sqlalchemy import Vector
 
-from database import Base
+from src.database import Base
 
 
 class Pokemon(Base):

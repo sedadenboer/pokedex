@@ -4,8 +4,8 @@
 # Loads data of pokemon into the database from a CSV file. Also see:
 # https://www.kaggle.com/datasets/rzgiza/pokdex-for-all-1025-pokemon-w-text-description?
 
-from database import Base, SessionLocal, engine
-from models import Pokemon
+from src.database import SessionLocal
+from src.models import Pokemon
 
 import pandas as pd
 
@@ -45,8 +45,3 @@ def load_csv(path: str) -> None:
 
     session.commit()
     session.close()
-
-
-if __name__ == "__main__":
-    Base.metadata.create_all(engine)
-    load_csv("pokemon-dataset/pokedex.csv")

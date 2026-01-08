@@ -5,8 +5,8 @@
 
 from sentence_transformers import SentenceTransformer
 
-from database import SessionLocal
-from models import Pokemon
+from src.database import SessionLocal
+from src.models import Pokemon
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -27,7 +27,3 @@ def generate_embeddings() -> None:
 
     session.commit()
     session.close()
-
-
-if __name__ == "__main__":
-    generate_embeddings()

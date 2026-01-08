@@ -11,8 +11,8 @@ import textwrap
 from sqlalchemy import func
 from sentence_transformers import CrossEncoder, SentenceTransformer
 
-from database import SessionLocal
-from models import Pokemon
+from src.database import SessionLocal
+from src.models import Pokemon
 
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 rerank_model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
@@ -119,19 +119,35 @@ def hybrid_search(query: str, limit: int = 10) -> List[Pokemon]:
     reranked_results = rerank(query, [keyword_results, semantic_results])
     return reranked_results[:limit]
 
-def print_results(
+def search_pokemon(
     query: str,
-    results: List[Pokemon],
-    title: str,
+    search_method: str,
 ) -> None:
     """
-    Print search results in a readable, formatted layout.
+    Search for Pokemon using the specified method and print results.
 
     Args:
         query: Search query string.
-        results: List of Pokemon objects to display.
-        title: Title shown above the results.
+        search_method: Either "keyword", "semantic", or "hybrid".
     """
+    results: List[Pokemon] = []
+    title: str = ""
+
+    if search_method == "keyword":
+        results = keyword_search(query)
+        title = "Keyword Search Results"
+    elif search_method == "semantic":
+        results = semantic_search(query)
+        title = "Semantic Search Results"
+    elif search_method == "hybrid":
+        results = hybrid_search(query)
+        title = "Hybrid Search Results"
+    else:
+        raise ValueError(
+            f"Invalid search method: {search_method}. "
+            f"Choose 'keyword', 'semantic', or 'hybrid'."
+        )
+
     print("\n" + "=" * 80)
     print(title.center(80))
     print("=" * 80)
@@ -150,19 +166,5 @@ def print_results(
 
 if __name__ == "__main__":
     query = "grass pokemon with poison abilities"
-
-    print_results(
-        query,
-        keyword_search(query),
-        "Keyword Search Results",
-    )
-    print_results(
-        query,
-        semantic_search(query),
-        "Semantic Search Results",
-    )
-    print_results(
-        query,
-        hybrid_search(query),
-        "Hybrid Search Results",
-    )
+    search_method = "hybrid"  # Options: "keyword", "semantic", "hybrid"
+    search_pokemon(query, search_method)
