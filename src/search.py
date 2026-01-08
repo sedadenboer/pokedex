@@ -176,6 +176,8 @@ def search_pokemon(
         print(f"      {pokemon.info}")
         print()
 
+    print("=" * 80 + "\n")
+
 
 if __name__ == "__main__":
     query = "grass pokemon with poison abilities"
