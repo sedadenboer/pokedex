@@ -21,11 +21,13 @@ The example dataset is a Pokémon Pokédex CSV file from: [Pokédex For All 1025
 
 ```text
 .
-├── database.py            # Database connection and session setup
-├── models.py              # SQLAlchemy models (Pokemon table)
-├── load_csv.py            # Load Pokémon CSV into PostgreSQL
-├── embeddings.py          # Generate and store vector embeddings
-├── search.py              # Keyword, semantic, and hybrid search
+├── src/
+│   ├── database.py        # Database connection and session setup
+│   ├── models.py          # SQLAlchemy models (Pokemon table)
+│   ├── load_csv.py        # Load Pokémon CSV into PostgreSQL
+│   ├── embeddings.py      # Generate and store vector embeddings
+│   └── search.py          # Keyword, semantic, and hybrid search
+├── main.py                # Entry point for all operations
 ├── .env.example           # Example environment variables
 ├── requirements.txt       # Required packages
 └── pokemon-dataset        # Directory containing Pokémon dataset file
@@ -57,71 +59,71 @@ CREATE DATABASE pokedex_db;
 CREATE EXTENSION vector;
 ```
 
-## Run Order
+## Quick Start
 
-The scripts must be executed in the following order:
-
-```text
-1. python load_csv.py       # Load Pokémon data into database
-2. python embeddings.py     # Generate and store embeddings
-3. python search.py         # Execute search queries
-```
-
-### Step 1: Load CSV Data
+1. Ensure the database is available and dependencies are installed.
+2. Run the script with a search method. The search query is **requested interactively** (or falls back to a default).
 
 ```bash
-python load_csv.py
+python main.py --search [search_method]
 ```
-* Reads `pokedex.csv`
-* Inserts Pokémon metadata into PostgreSQL
-* Does **not** generate embeddings yet
 
-### Step 2: Generate Embeddings
+Available search methods:
+
+* `keyword`
+* `semantic`
+* `hybrid`
+* `all`
+
+Optional verbose logging:
 
 ```bash
-python embeddings.py
+python main.py --search hybrid --verbose
 ```
-* Loads Pokémon descriptions from the database
-* Generates sentence embeddings using SentenceTransformers
-* Stores embeddings in a `vector` column using pgvector
 
-### Step 3: Run Searches
+After starting:
 
-```bash
-python search.py
-```
-* Keyword search (PostgreSQL full-text search)
-* Semantic search (vector similarity)
-* Hybrid search with cross-encoder reranking
+* Database tables are created
+* The CSV file (`pokemon-dataset/pokedex.csv`) is loaded
+* Embeddings are generated
+* You are prompted for a search query
+  (press Enter to use the default query)
 
 ## Search methods
 
 ### Keyword Search
-Keyword search utilizes PostgreSQL's full-text search capabilities to find relevant Pokémon based on specific keywords. This method is efficient for retrieving exact matches and is particularly useful for users looking for specific terms.
 
-Example usage:
-```python
-keyword_search("strange seed")
-```
+Uses PostgreSQL full-text search.
+Best for exact terms and fast filtering.
 
 ### Semantic Search
-Semantic search leverages pgvector to compute vector similarity between the user's query and Pokémon descriptions. This approach allows for more nuanced searches, capturing the meaning behind the words rather than relying solely on exact matches.
 
-Example usage:
-```python
-semantic_search("grass pokemon with poison abilities")
-```
+Uses pgvector for vector similarity on descriptions.
+Best for meaning-based queries.
 
 ### Hybrid Search
 
-1. Perform keyword search using PostgreSQL full-text search
-2. Perform semantic search using pgvector similarity
-3. Combine both result sets
-4. Remove duplicates
-5. Rerank results using a cross-encoder model
-6. Return the most relevant documents
+Combination of keyword and semantic search. Uses a reranker to generate the final search results.
 
-Example usage:
-```python
-hybrid_search("grass pokemon with poison abilities")
+Pipeline:
+1. Keyword search (PostgreSQL FTS)
+2. Semantic search (pgvector)
+3. Combine result sets
+4. Remove duplicates
+5. Rerank using a cross-encoder model
+6. Return the most relevant results
+
+
+## Examples
+
+Run all search methods sequentially:
+
+```bash
+python main.py --search all --verbose
+```
+
+Only load data and generate embeddings (no search):
+
+```bash
+python main.py --verbose
 ```

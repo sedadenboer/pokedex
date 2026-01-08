@@ -10,22 +10,32 @@ from src.models import Pokemon
 import pandas as pd
 
 
-def load_csv(path: str) -> None:
+def load_csv(path: str, verbose: bool = False) -> None:
     """
-    Load Pokemon data from a CSV file into the database.
+    Load Pokémon data from a CSV file into the database.
     
     Args:
-        path: Path to the CSV file containing Pokemon data.
+        path: Path to the CSV file containing Pokémon data.
+        verbose: If True, print progress information.
     """
     df = pd.read_csv(path)
     session = SessionLocal()
 
-    for _, row in df.iterrows():
-        # Check if Pokemon already exists
+    if verbose:
+        print(f"Loading {len(df)} Pokémon from {path}...")
+
+    new_pokemon = 0
+
+    for idx, (_, row) in enumerate(df.iterrows(), 1):
+        # Check if Pokémon already exists
         existing = session.query(Pokemon).filter(Pokemon.id == int(row["id"])).first()
         if existing:
             continue
-        
+        else:
+            new_pokemon += 1
+            if verbose:
+                print(f"  [{idx}/{len(df)}] Adding {row['name']}...")
+            
         pokemon = Pokemon(
             id=int(row["id"]),
             name=row["name"],
@@ -45,3 +55,9 @@ def load_csv(path: str) -> None:
 
     session.commit()
     session.close()
+
+    if verbose:
+        if new_pokemon == 0:
+            print("No new Pokémon to add.")
+        else:
+            print(f"Loaded {new_pokemon} new Pokémon into the database.")
