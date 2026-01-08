@@ -14,9 +14,6 @@ from sentence_transformers import CrossEncoder, SentenceTransformer
 from src.database import SessionLocal
 from src.models import Pokemon
 
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-rerank_model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
-
 
 def keyword_search(query: str, limit: int = 10, verbose: bool = False) -> List[Pokemon]:
     """
@@ -63,6 +60,7 @@ def semantic_search(query: str, limit: int = 10, verbose: bool = False) -> List[
         List of Pokemon objects ordered by embedding similarity.
     """
     session = SessionLocal()
+    embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
     query_embedding = embedding_model.encode(query).tolist()
     if verbose:
@@ -99,6 +97,7 @@ def rerank(query: str, result_sets: List[List[Pokemon]], verbose: bool = False) 
     if verbose:
         print(f"[rerank] Reranking {len(unique_results)} unique results")
 
+    rerank_model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
     scores = rerank_model.predict(
         [(query, pokemon.info) for pokemon in unique_results]
     )
@@ -177,9 +176,3 @@ def search_pokemon(
         print()
 
     print("=" * 80 + "\n")
-
-
-if __name__ == "__main__":
-    query = "grass pokemon with poison abilities"
-    search_method = "hybrid"  # Options: "keyword", "semantic", "hybrid"
-    search_pokemon(query, search_method)

@@ -13,21 +13,26 @@ from src.search import search_pokemon
 QUERY = "grass pokemon with poison abilities"
 
 
-def main(search_method: str = None, verbose: bool = False) -> None:
+def main(update_db: bool = False, search_method: str = None, verbose: bool = False) -> None:
     """
     Load data, generate embeddings, and run search demonstration.
 
     Args:
+        update_db: If True, reloads the database with CSV data.
         search_method: Search method to use ('keyword', 'semantic', 'hybrid', or 'all').
                       If None, skips search demonstration.
         verbose: Enable verbose output.
     """
-    # Create database tables
-    Base.metadata.create_all(engine)
+    if update_db:
+        if verbose:
+            print("Updating database with CSV data...")
+            
+        # Create database tables
+        Base.metadata.create_all(engine)
 
-    # Load data from CSV into the database and generate embeddings
-    load_csv("pokemon-dataset/pokedex.csv", verbose=verbose)
-    generate_embeddings(verbose=verbose)
+        # Load data from CSV into the database and generate embeddings
+        load_csv("pokemon-dataset/pokedex.csv", verbose=verbose)
+        generate_embeddings(verbose=verbose)
 
     # Run search queries based on specified method
     if search_method:
@@ -49,6 +54,11 @@ if __name__ == "__main__":
         description="Pokémon search system"
     )
     parser.add_argument(
+        "--update",
+        action="store_true",
+        help="Reload the database with data from the CSV file"
+    )
+    parser.add_argument(
         "--search",
         choices=["keyword", "semantic", "hybrid", "all"],
         help="Search method to use (keyword, semantic, hybrid, or all)"
@@ -60,4 +70,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    main(search_method=args.search, verbose=args.verbose)
+    main(update_db=args.update, search_method=args.search, verbose=args.verbose)

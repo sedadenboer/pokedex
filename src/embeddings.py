@@ -9,8 +9,6 @@ from sentence_transformers import SentenceTransformer
 from src.database import SessionLocal
 from src.models import Pokemon
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
 
 def generate_embeddings(verbose: bool = True) -> None:
     """
@@ -23,6 +21,7 @@ def generate_embeddings(verbose: bool = True) -> None:
         verbose: If True, print progress messages.
     """
     session = SessionLocal()
+    model = SentenceTransformer("all-MiniLM-L6-v2")
     pokemons: list[Pokemon] = session.query(Pokemon).filter(
         Pokemon.embedding == None
         ).all()  # noqa: E711
