@@ -43,8 +43,8 @@ pip install -r requirements.txt
 Create the database and enable pgvector:
 
 ```sql
-CREATE DATABASE rag_db;
-\c rag_db
+CREATE DATABASE pokedex_db;
+\c pokedex_db
 CREATE EXTENSION vector;
 ```
 
