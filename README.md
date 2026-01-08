@@ -8,14 +8,14 @@ open-source tools. It combines:
 - SentenceTransformers (embeddings + reranking)
 - SQLAlchemy (ORM)
 
-The example dataset is a Pokémon Pokédex CSV file from: https://www.kaggle.com/datasets/rzgiza/pokdex-for-all-1025-pokemon-w-text-description?
+The example dataset is a Pokémon Pokédex CSV file from: [Pokédex For All 1025 Pokémon (+ text descriptions)](https://www.kaggle.com/datasets/rzgiza/pokdex-for-all-1025-pokemon-w-text-description?)
 
 ## Requirements
 
 ### System
-- Python 3.10 or newer
-- PostgreSQL 14+
-- pgvector extension installed
+- [Python](https://www.python.org/downloads/) 3.10+
+- [PostgreSQL](https://www.postgresql.org/) 14+
+- [pgvector](https://github.com/pgvector/pgvector) extension installed
 
 ## Project Structure
 
@@ -33,8 +33,17 @@ The example dataset is a Pokémon Pokédex CSV file from: https://www.kaggle.com
 ```
 
 ## Install packages
-Install required packages with:
+
+Create a virtual environment first:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
+
+Install required packages with:
+
+```bash
 pip install -r requirements.txt
 ```
 
