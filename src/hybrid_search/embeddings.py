@@ -4,10 +4,11 @@
 # Generate and store vector embeddings for Pokemon data
 # using SentenceTransformer.
 
+import datetime
 from sentence_transformers import SentenceTransformer
 
-from src.database import SessionLocal
-from src.models import Pokemon
+from hybrid_search.database import SessionLocal
+from hybrid_search.models import Pokemon
 
 
 def generate_embeddings(verbose: bool = True) -> None:
@@ -28,11 +29,11 @@ def generate_embeddings(verbose: bool = True) -> None:
     
     if verbose:
         if not pokemons:
-            print("No new Pokémon to generate embeddings for.")
+            print(f"[{datetime.datetime.now()}] No new Pokémon to generate embeddings for.")
             session.close()
             return
 
-        print(f"Generating embeddings for {len(pokemons)} Pokémon...")
+        print(f"[{datetime.datetime.now()}] Generating embeddings for {len(pokemons)} Pokémon...")
 
     for i, pokemon in enumerate(pokemons):
         text: str = f"{pokemon.name}. Type: {pokemon.type}. {pokemon.info}"
@@ -45,4 +46,4 @@ def generate_embeddings(verbose: bool = True) -> None:
     session.close()
     
     if verbose:
-        print("Embeddings generation complete!")
+        print(f"[{datetime.datetime.now()}] Embeddings generation complete!")

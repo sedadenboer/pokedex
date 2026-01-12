@@ -2,20 +2,21 @@
 #
 # Description:
 # Implements keyword, semantic, and hybrid search with cross-encoder reranking
-# for querying Pokemon embeddings and metadata from the database.
+# for querying Pokémon embeddings and metadata from the database.
 
 from typing import List
+import datetime
 import itertools
 import textwrap
 
 from sqlalchemy import func
 from sentence_transformers import CrossEncoder, SentenceTransformer
 
-from src.database import SessionLocal
-from src.models import Pokemon
+from hybrid_search.database import SessionLocal
+from hybrid_search.models import Pokemon
 
 
-def keyword_search(query: str, limit: int = 10, verbose: bool = False) -> List[Pokemon]:
+def keyword_search(query: str, limit: int = 5, verbose: bool = False) -> List[Pokemon]:
     """
     Perform full-text keyword search on the Pokemon info field.
 
@@ -42,12 +43,12 @@ def keyword_search(query: str, limit: int = 10, verbose: bool = False) -> List[P
     )
 
     if verbose:
-        print(f"[keyword_search] Found {len(results)} results")
+        print(f"[{datetime.datetime.now()}] Keyword search found {len(results)} results")
 
     session.close()
     return results
 
-def semantic_search(query: str, limit: int = 10, verbose: bool = False) -> List[Pokemon]:
+def semantic_search(query: str, limit: int = 5, verbose: bool = False) -> List[Pokemon]:
     """
     Perform vector similarity search using embeddings.
 
@@ -63,8 +64,6 @@ def semantic_search(query: str, limit: int = 10, verbose: bool = False) -> List[
     embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
     query_embedding = embedding_model.encode(query).tolist()
-    if verbose:
-        print(f"[semantic_search] Query embedding shape: {len(query_embedding)}")
 
     results = (
         session.query(Pokemon)
@@ -74,7 +73,7 @@ def semantic_search(query: str, limit: int = 10, verbose: bool = False) -> List[
     )
 
     if verbose:
-        print(f"[semantic_search] Found {len(results)} results")
+        print(f"[{datetime.datetime.now()}] Semantic search found {len(results)} results")
 
     session.close()
     return results
@@ -95,7 +94,7 @@ def rerank(query: str, result_sets: List[List[Pokemon]], verbose: bool = False) 
     unique_results = {pokemon.id: pokemon for pokemon in combined_results}.values()
 
     if verbose:
-        print(f"[rerank] Reranking {len(unique_results)} unique results")
+        print(f"[{datetime.datetime.now()}] Reranking {len(unique_results)} results")
 
     rerank_model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
     scores = rerank_model.predict(
@@ -111,7 +110,7 @@ def rerank(query: str, result_sets: List[List[Pokemon]], verbose: bool = False) 
 
     return reranked
 
-def hybrid_search(query: str, limit: int = 10, verbose: bool = False) -> List[Pokemon]:
+def hybrid_search(query: str, limit: int = 5, verbose: bool = False) -> List[Pokemon]:
     """
     Perform hybrid search combining keyword, semantic search, and reranking.
 
@@ -123,6 +122,9 @@ def hybrid_search(query: str, limit: int = 10, verbose: bool = False) -> List[Po
     Returns:
         List of top-ranked Pokemon objects.
     """
+    if verbose:
+        print(f"[{datetime.datetime.now()}] Performing hybrid search")
+
     keyword_results = keyword_search(query, limit, verbose)
     semantic_results = semantic_search(query, limit, verbose)
 
@@ -131,9 +133,10 @@ def hybrid_search(query: str, limit: int = 10, verbose: bool = False) -> List[Po
 
 def search_pokemon(
     query: str,
-    search_method: str,
+    limit: int = 5,
+    search_method: str = "hybrid",
     verbose: bool = False,
-) -> None:
+) -> List[Pokemon]:
     """
     Search for Pokemon using the specified method and print results.
 
@@ -146,13 +149,13 @@ def search_pokemon(
     title: str = ""
 
     if search_method == "keyword":
-        results = keyword_search(query, verbose=verbose)
+        results = keyword_search(query, limit=limit, verbose=verbose)
         title = "Keyword Search Results"
     elif search_method == "semantic":
-        results = semantic_search(query, verbose=verbose)
+        results = semantic_search(query, limit=limit, verbose=verbose)
         title = "Semantic Search Results"
     elif search_method == "hybrid":
-        results = hybrid_search(query, verbose=verbose)
+        results = hybrid_search(query, limit=limit, verbose=verbose)
         title = "Hybrid Search Results"
     else:
         raise ValueError(
@@ -160,19 +163,31 @@ def search_pokemon(
             f"Choose 'keyword', 'semantic', or 'hybrid'."
         )
 
-    print("\n" + "=" * 80)
-    print(title.center(80))
-    print("=" * 80)
-    print(f"QUERY: '{query}'\n")
+    if verbose:
+        print(f"[{datetime.datetime.now()}] Displaying "
+            f"{len(results)} results for '{search_method}' search")
+        print("\n" + "=" * 80)
+        print(title.center(80))
+        print("=" * 80)
+        print(f"QUERY: '{query}'\n")
 
-    if not results:
-        print("No results found.")
-        return
+        if not results:
+            print("No results found.")
+            return
 
-    for index, pokemon in enumerate(results, start=1):
-        print(f"{index}. {pokemon.name} (Type: {pokemon.type})")
-        print("   Info:")
-        print(f"      {pokemon.info}")
-        print()
+        for index, pokemon in enumerate(results, start=1):
+            print(f"{index}. {pokemon.name} (Type: {pokemon.type})")
+            print("   Info:")
 
-    print("=" * 80 + "\n")
+            wrapped_info = textwrap.fill(
+                pokemon.info,
+                width=80,
+                initial_indent="      ",
+                subsequent_indent="      "
+            )
+            print(wrapped_info)
+            print()
+
+        print("=" * 80 + "\n")
+    
+    return results

@@ -4,10 +4,11 @@
 # Loads data of pokemon into the database from a CSV file. Also see:
 # https://www.kaggle.com/datasets/rzgiza/pokdex-for-all-1025-pokemon-w-text-description?
 
-from src.database import SessionLocal
-from src.models import Pokemon
-
+import datetime
 import pandas as pd
+
+from hybrid_search.database import SessionLocal
+from hybrid_search.models import Pokemon
 
 
 def load_csv(path: str, verbose: bool = False) -> None:
@@ -22,7 +23,7 @@ def load_csv(path: str, verbose: bool = False) -> None:
     session = SessionLocal()
 
     if verbose:
-        print(f"Loading {len(df)} Pokémon from {path}...")
+        print(f"[{datetime.datetime.now()}] Loading {len(df)} Pokémon from {path}...")
 
     new_pokemon = 0
 
@@ -34,7 +35,7 @@ def load_csv(path: str, verbose: bool = False) -> None:
         else:
             new_pokemon += 1
             if verbose:
-                print(f"  [{idx}/{len(df)}] Adding {row['name']}...")
+                print(f"  [{datetime.datetime.now()}] [{idx}/{len(df)}] Adding {row['name']}...")
             
         pokemon = Pokemon(
             id=int(row["id"]),
@@ -58,6 +59,6 @@ def load_csv(path: str, verbose: bool = False) -> None:
 
     if verbose:
         if new_pokemon == 0:
-            print("No new Pokémon to add.")
+            print(f"[{datetime.datetime.now()}] No new Pokémon to add.")
         else:
-            print(f"Loaded {new_pokemon} new Pokémon into the database.")
+            print(f"[{datetime.datetime.now()}] Loaded {new_pokemon} new Pokémon into the database.")
