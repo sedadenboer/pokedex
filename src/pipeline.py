@@ -2,13 +2,13 @@
 #
 # Description:
 # Pokédex RAG pipeline to load data, generate embeddings, run searches,
-# and generate answers using the Qwen LLM.
+# and generate answers using the Qwen src.llm.
 
 import datetime
 
-from hybrid_search.search import search_pokemon
-from llm.prompt import pokedex_prompt
-from llm.qwen import generate_answer
+from src.hybrid_search.search import search_pokemon
+from src.llm.prompt import pokedex_prompt
+from src.llm.qwen import generate_answer
 
 
 def pipeline(
@@ -24,7 +24,7 @@ def pipeline(
 
     1. Optionally loads/updates the database with CSV data.
     2. Retrieves top N Pokémon results using the specified search method.
-    3. Builds the prompt and generates an answer using the Qwen LLM.
+    3. Builds the prompt and generates an answer using the Qwen src.llm.
 
     Args:
         query: Search query string.
@@ -53,15 +53,3 @@ def pipeline(
     answer = generate_answer(prompt, verbose=verbose)
 
     return answer
-
-
-if __name__ == "__main__":
-    # Example usage of the pipeline
-    response = pipeline(
-        query="fire type Pokémon with high attack stats",
-        top_n=5,
-        update_db=False,
-        search_method="hybrid",
-        verbose=True
-    )
-    print(f"Generated Answer:\n{response}")

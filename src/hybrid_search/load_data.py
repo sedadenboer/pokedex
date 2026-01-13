@@ -7,8 +7,8 @@
 import datetime
 import pandas as pd
 
-from hybrid_search.database import SessionLocal
-from hybrid_search.models import Pokemon
+from src.hybrid_search.database import SessionLocal
+from src.hybrid_search.models import Pokemon
 
 
 def load_csv(path: str, verbose: bool = False) -> None:

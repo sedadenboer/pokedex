@@ -7,8 +7,8 @@
 import datetime
 from sentence_transformers import SentenceTransformer
 
-from hybrid_search.database import SessionLocal
-from hybrid_search.models import Pokemon
+from src.hybrid_search.database import SessionLocal
+from src.hybrid_search.models import Pokemon
 
 
 def generate_embeddings(verbose: bool = True) -> None:

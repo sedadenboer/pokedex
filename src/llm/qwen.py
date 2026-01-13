@@ -9,7 +9,7 @@ import datetime
 import ollama
 from dotenv import load_dotenv
 
-from llm.prompt import system_prompt
+from src.llm.prompt import system_prompt
 
 load_dotenv()
 
@@ -19,7 +19,7 @@ def generate_answer(prompt: str, verbose: bool = False) -> str:
     Generate an answer with the LLM based on the provided prompt.
 
     Args:
-        prompt (str): The complete prompt to send to the LLM.
+        prompt (str): The complete prompt to send to the src.llm.
         verbose (bool): If True, prints debug information.
 
     Returns:
@@ -48,7 +48,7 @@ def generate_answer(prompt: str, verbose: bool = False) -> str:
 
         answer = response.get("message", {}).get("content", "")
         if not answer:
-            raise ValueError("Received empty response from the LLM.")
+            raise ValueError("Received empty response from the src.llm.")
         else:
             if verbose:
                 print(f"[{datetime.datetime.now()}] Successfully generated answer from LLM!\n")

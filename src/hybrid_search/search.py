@@ -12,8 +12,8 @@ import textwrap
 from sqlalchemy import func
 from sentence_transformers import CrossEncoder, SentenceTransformer
 
-from hybrid_search.database import SessionLocal
-from hybrid_search.models import Pokemon
+from src.hybrid_search.database import SessionLocal
+from src.hybrid_search.models import Pokemon
 
 
 def keyword_search(query: str, limit: int = 5, verbose: bool = False) -> List[Pokemon]:

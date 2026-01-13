@@ -7,7 +7,7 @@ import datetime
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from hybrid_search.models import Pokemon
+    from src.hybrid_search.models import Pokemon
 
 
 def process_pokemon(pokemon: "Pokemon", position: int) -> str:
@@ -85,7 +85,7 @@ def pokedex_prompt(query: str, documents: List["Pokemon"], limit: int, verbose: 
         verbose (bool): If True, prints debug information.
 
     Returns:
-        str: Complete prompt for the LLM.
+        str: Complete prompt for the src.llm.
     """
     count = len(documents)
 
