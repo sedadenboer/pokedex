@@ -2,7 +2,7 @@
 #
 # Description:
 # Pokédex RAG pipeline to load data, generate embeddings, run searches,
-# and generate answers using the Qwen src.llm.
+# and generate LLM answers.
 
 import datetime
 

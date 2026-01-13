@@ -31,7 +31,7 @@ The example dataset is a Pokémon Pokédex CSV file from: [Pokédex For All 1025
 │   │   ├── models.py          # SQLAlchemy ORM models
 │   │   ├── load_data.py       # CSV → database
 │   │   ├── embeddings.py      # embedding generation
-│   │   └──  search.py          # keyword / semantic / hybrid search
+│   │   └── search.py          # keyword / semantic / hybrid search
 │   └── llm/
 │       ├── prompt.py          # prompt templates
 │       └── qwen.py            # Ollama Qwen wrapper
