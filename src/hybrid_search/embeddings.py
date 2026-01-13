@@ -7,7 +7,7 @@
 import datetime
 from sentence_transformers import SentenceTransformer
 
-from src.hybrid_search.database import SessionLocal
+from src.hybrid_search.setup_db import SessionLocal
 from src.hybrid_search.models import Pokemon
 
 

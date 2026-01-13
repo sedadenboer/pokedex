@@ -6,14 +6,14 @@
 import argparse
 import datetime
 
+from src.hybrid_search.init_db import initialise_database
 from src import pipeline
 
 
-def main() -> None:
+def args_parser() -> argparse.Namespace:
     """
-    #TODO: Add function description
+    Parse command-line arguments.
     """
-    # Parse command-line arguments
     parser = argparse.ArgumentParser(
         description="Pokémon search system"
     )
@@ -32,19 +32,21 @@ def main() -> None:
         action="store_true",
         help="Enable verbose output"
     )
-    args = parser.parse_args()
-    
+    return parser.parse_args()
+ 
+def main() -> None:
+    """
+    Main function to handle database updates and search queries.
+
+    1. Updates the database if --update flag is set.
+    2. Runs search queries based on the specified method.
+    3. Prints the generated answers.
+    """
+    args = args_parser()
+
     # Update database if specified
     if args.update:
-        if args.verbose:
-            print(f"[{datetime.datetime.now()}] Updating database with CSV data...")
-            
-        # Create database tables
-        Base.metadata.create_all(engine)
-
-        # Load data from CSV into the database and generate embeddings
-        load_csv("pokemon-dataset/pokedex.csv", verbose=args.verbose)
-        generate_embeddings(verbose=args.verbose)
+        initialise_database(verbose=args.verbose)
 
     # Run search queries based on specified method
     if args.search:
@@ -62,7 +64,6 @@ def main() -> None:
         response = pipeline.pipeline(
             query=query,
             top_n=top_n,
-            update_db=args.update,
             search_method=args.search,
             verbose=args.verbose
         )

@@ -1,4 +1,4 @@
-# database.py
+# setup_db.py
 #
 # Description:
 # Database engine and session configuration for SQLAlchemy ORM.
