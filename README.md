@@ -82,26 +82,25 @@ ollama pull qwen2.5:3b-instruct
 ### Start searching for Pokémon
 
 1. Ensure the database is available and dependencies are installed.
-2. Ensure environment variables are set and correct.
-3. Ensure LLM model is running locally by running:
+2. Ensure LLM model is running locally by running:
 
 ```bash
 ollama run qwen2.5:3b-instruct
 ```
-
+3. Ensure environment variables for the database URL and LLM model are set and correct.
 4. Initialize the database (create tables, load CSV data, generate embeddings):
 
 ```bash
 python main.py --update
 ```
 
-5. Run the script with a search method. The search query and number of Pokémon to display is **requested interactively**:
+5. Run the script with a search method. The search query and number of Pokémon to display are **requested interactively**:
 
 ```bash
 python main.py --search [keyword|semantic|hybrid]
 ```
 
-6. For hybrid search, the RAG pipeline will combine results and **rerank** them before generating an answer using the LLM.
+6. For hybrid search, the RAG pipeline will combine results and rerank them before generating an answer using the LLM.
 
 Optional verbose logging:
 
@@ -120,8 +119,7 @@ python main.py --update --search hybrid --verbose
 * Database tables are created
 * The CSV file (`pokemon-dataset/pokedex.csv`) is loaded
 * Embeddings are generated
-* You are prompted for a search query
-  (press Enter to use the default query)
+* You are prompted for a search query and the number of Pokémon to give back
 
 ## RAG Pipeline steps
 
@@ -158,7 +156,7 @@ After retrieval, the selected Pokémon records are passed to the LLM for answer 
 2. Prompt injection
    * The user query and retrieved context are inserted into a prompt template
 
-3. LLM model generates a grounded answer based solely on the retrieved context
+3. LLM model generates an answer based solely on the retrieved context
 
 4. The generated answer is returned and printed
 
