@@ -4,52 +4,16 @@
 # Main script to load data, generate embeddings, and run search queries.
 
 import argparse
+import datetime
 
-from src.database import Base, engine
-from src.embeddings import generate_embeddings
-from src.load_data import load_csv
-from src.search import search_pokemon
-
-QUERY = "grass pokemon with poison abilities"
+from src import pipeline
 
 
-def main(update_db: bool = False, search_method: str = None, verbose: bool = False) -> None:
+def main() -> None:
     """
-    Load data, generate embeddings, and run search demonstration.
-
-    Args:
-        update_db: If True, reloads the database with CSV data.
-        search_method: Search method to use ('keyword', 'semantic', 'hybrid', or 'all').
-                      If None, skips search demonstration.
-        verbose: Enable verbose output.
+    #TODO: Add function description
     """
-    if update_db:
-        if verbose:
-            print("Updating database with CSV data...")
-            
-        # Create database tables
-        Base.metadata.create_all(engine)
-
-        # Load data from CSV into the database and generate embeddings
-        load_csv("pokemon-dataset/pokedex.csv", verbose=verbose)
-        generate_embeddings(verbose=verbose)
-
-    # Run search queries based on specified method
-    if search_method:
-        # Get query from user
-        query = input("Enter your search query: ").strip()
-        if not query:
-            query = QUERY
-
-        if search_method == "all":
-            search_pokemon(query, search_method="keyword", verbose=verbose)
-            search_pokemon(query, search_method="semantic", verbose=verbose)
-            search_pokemon(query, search_method="hybrid", verbose=verbose)
-        else:
-            search_pokemon(query, search_method=search_method, verbose=verbose)
-
-
-if __name__ == "__main__":
+    # Parse command-line arguments
     parser = argparse.ArgumentParser(
         description="Pokémon search system"
     )
@@ -60,8 +24,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--search",
-        choices=["keyword", "semantic", "hybrid", "all"],
-        help="Search method to use (keyword, semantic, hybrid, or all)"
+        choices=["keyword", "semantic", "hybrid"],
+        help="Search method to use (keyword, semantic, or hybrid)"
     )
     parser.add_argument(
         "--verbose",
@@ -69,5 +33,42 @@ if __name__ == "__main__":
         help="Enable verbose output"
     )
     args = parser.parse_args()
+    
+    # Update database if specified
+    if args.update:
+        if args.verbose:
+            print(f"[{datetime.datetime.now()}] Updating database with CSV data...")
+            
+        # Create database tables
+        Base.metadata.create_all(engine)
 
-    main(update_db=args.update, search_method=args.search, verbose=args.verbose)
+        # Load data from CSV into the database and generate embeddings
+        load_csv("pokemon-dataset/pokedex.csv", verbose=args.verbose)
+        generate_embeddings(verbose=args.verbose)
+
+    # Run search queries based on specified method
+    if args.search:
+        # Get query and top_n from user input
+        query = input("Enter your search query: ").strip()
+
+        while not query:
+            print("Query cannot be empty. Please enter a valid search query.")
+            query = input("Enter your search query: ").strip()
+            
+        top_n = input("Enter number of top results to retrieve (default 5): ").strip()
+        top_n = int(top_n) if top_n.isdigit() else 5
+
+        # Run the RAG pipeline
+        response = pipeline.pipeline(
+            query=query,
+            top_n=top_n,
+            update_db=args.update,
+            search_method=args.search,
+            verbose=args.verbose
+        )
+        print("\nGenerated Answer:")
+        print(response)
+
+
+if __name__ == "__main__":
+    main()
