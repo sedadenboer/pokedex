@@ -22,7 +22,7 @@ def pipeline(
     in the Pokédex database. 
 
     1. Retrieves top N Pokémon results using the specified search method.
-    2. Builds the prompt and generates an answer using the Qwen src.llm.
+    2. Builds the prompt and generates an answer using the Qwen 2.5 3B Instruct model.
 
     Args:
         query: Search query string.

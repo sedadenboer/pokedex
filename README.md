@@ -88,7 +88,7 @@ ollama pull qwen2.5:3b-instruct
 ollama run qwen2.5:3b-instruct
 ```
 3. Ensure environment variables for the database URL and LLM model are set and correct.
-4. Initialize the database (create tables, load CSV data, generate embeddings):
+4. Initialise the database (create tables, load CSV data, generate embeddings):
 
 ```bash
 python main.py --update
@@ -160,6 +160,23 @@ After retrieval, the selected Pokémon records are passed to the LLM for answer 
 
 4. The generated answer is returned and printed
 
+## Example output
 
+```bash
+python main.py --search hybrid
+```
+```txt
+Enter your search query: large water Pokémon
+Enter number of top results to retrieve (default 5): 3
 
+Generated Answer:
+The retrieved Pokémon that match the criteria of large water Pokémon are as follows:
+
+1. wailord
+2. blastoise
+3. quaxwell
+
+**Summary:**
+All three retrieved Pokémon are aquatic and have a significant height, indicating they are large water-type POKéMON. Wailord is described as the largest identified POKéMON, swimming in vast open seas with an enormous mouth for eating massive amounts of food at once. Blastoise, on the other hand, uses powerful water jets from its shell to tackle opponents aggressively. Quaxwell constantly runs through shallow waters to improve its leg strength and compete in graceful kicking competitions. Each Pokémon is distinct but shares a common trait of being large aquatic creatures.
+```
 

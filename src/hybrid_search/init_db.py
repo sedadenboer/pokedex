@@ -1,7 +1,7 @@
 # init_db.py
 #
 # Description:
-# Initialize the Pokédex database by creating tables,
+# Initialise the Pokédex database by creating tables,
 # loading data from CSV, and generating embeddings.
 
 import datetime
@@ -14,7 +14,7 @@ DATASET_CSV_PATH = "pokemon-dataset/pokedex.csv"
 
 def initialise_database(verbose: bool = False):
     """
-    Initialize the database by creating tables, loading data from CSV,
+    Initialise the database by creating tables, loading data from CSV,
     and generating embeddings.
 
     Args:
